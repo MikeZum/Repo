@@ -16,3 +16,5 @@ console.log("Стоимость разработки сайта" + " " + screenP
 
 console.log(screens.toLowerCase());
 console.log(screens.split(", "));
+console.log("myFirstMessege");
+// проверка
