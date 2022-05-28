@@ -8,4 +8,4 @@ let adaptive = "myAdaptive";
 alert("Hi!");
 
 console.log("myFirstMessege");
-// проверка
+// проверкаf
