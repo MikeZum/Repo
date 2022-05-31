@@ -14,5 +14,5 @@ console.log(screens.length);
 console.log("Стоимость верстки экранов" + " " + screenPrice + " " + "рублей");
 console.log("Стоимость разработки сайта" + " " + screenPrice + " " + "рублей");
 
-console.log(screens.toLowerCase());
-console.log(screens.split(", "));
+console.log(screens.toLowerCase().split(", "));
+console.log(fullPrice * (rollback / 100));
