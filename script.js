@@ -1,55 +1,101 @@
-let randomNum = parseInt(Math.random() * 100);
-console.log(randomNum);
-let userNum = prompt("Угадай число от 1 до 100");
-let attempts = 2;
+"use strict";
 
-let guessfunc = () => {
-  function Res() {
-    if (userNum == null) {
-      alert("До новых встреч!!!");
-      return;
+const appData = {
+  title: "",
+  screens: "",
+  screenPrice: 0,
+  adaptive: true,
+  service1: "",
+  service2: "",
+  allServicePrices: 0,
+  fullPrice: 0,
+  rollback: 0,
+  servicePercentPrice: 0,
+
+  isNumber: function (num) {
+    return !isNaN(parseFloat(num)) && isFinite(num);
+  },
+
+  start: function () {
+    appData.asking();
+    appData.allServicePrices = appData.getAllServicePrices();
+    appData.fullPrice = appData.getFullPrice(
+      +appData.screenPrice.trim(),
+      appData.allServicePrices
+    );
+    appData.rollback = appData.fullPrice * (20 / 100);
+    appData.servicePercentPrice = Math.ceil(
+      appData.getServicePercentPrices(appData.fullPrice, appData.rollback)
+    );
+    appData.title = appData.getTitle(appData.title);
+    appData.logger();
+  },
+
+  asking: function () {
+    appData.title = prompt("Как называется ваш проект?", "spaceX");
+    appData.screens = prompt(
+      "Какие типы экранов нужно разработать?",
+      "Простые, Сложные, Интерактивные"
+    );
+
+    do {
+      appData.screenPrice = prompt("Сколько будет стоить данная работа?");
+    } while (!appData.isNumber(appData.screenPrice));
+
+    appData.adaptive = confirm("Нужен ли адаптив на сайте?");
+  },
+
+  getRollbackMessage: function (price) {
+    if (price > 30000) {
+      return "Даем скидку в 10%";
+    } else if (15000 < price && price <= 30000) {
+      return "Даем скидку в 5%";
+    } else if (0 <= price && price <= 15000) {
+      return "Скидка не предусмотрена";
+    } else {
+      return "Что то пошло не так";
     }
-    attempts--;
+  },
 
-    if (attempts === 0) {
-      let choose;
-
-      choose = confirm("Попытки закончились, хотите сыграть еще?");
-
-      if (choose) {
-        userNum = prompt("Угадай число от 1 до 100");
-        attempts = 2;
+  getAllServicePrices: function () {
+    let sum = 0;
+    let num1, num2;
+    for (let i = 0; i < 2; i++) {
+      if (i === 0) {
+        appData.service1 = prompt("Какой дополнительный тип услуги нужен?");
+        do {
+          num1 = prompt("Сколько это будет стоить?");
+        } while (!appData.isNumber(num1));
+      } else if (i === 1) {
+        appData.service2 = prompt("Какой дополнительный тип услуги нужен?");
+        do {
+          num2 = prompt("Сколько это будет стоить?");
+        } while (!appData.isNumber(num2));
       }
     }
+    sum = +num1.trim() + +num2.trim();
+    return sum;
+  },
 
-    if (userNum == randomNum) {
-      // let choose;
+  getFullPrice: function (screenPrice, allServicePrices) {
+    return screenPrice + allServicePrices;
+  },
 
-      choose = confirm("Поздравляю, Вы угадали!!! Хотели бы сыграть еще?");
-      if (choose) {
-        location.reload();
-        // randomNum = parseInt(Math.random() * 100);
-        // userNum = prompt("Угадай число от 1 до 100");
-        // attempts = 2;
-        // return;
-      }
-    } else if (isNaN(userNum)) {
-      alert("Введи число!");
-      userNum = prompt("Введите число");
-      guessNumber();
-    } else if (userNum < randomNum) {
-      alert("Загаданное число больше, осталось попыток " + attempts);
-      userNum = prompt("Введите число");
-      guessNumber();
-    } else if (userNum > randomNum) {
-      alert("Загаданное число меньше, осталось попыток " + attempts);
-      userNum = prompt("Введите число");
-      guessNumber();
+  getTitle: function (str) {
+    let low = str.trim().toLowerCase();
+    let upp = low.charAt(0).toUpperCase() + low.slice(1);
+    return upp;
+  },
+
+  getServicePercentPrices: function (fullPrice, rollback) {
+    return fullPrice - rollback;
+  },
+
+  logger: function () {
+    for (let key in appData) {
+      console.log(key);
     }
-  }
-
-  return Res;
+  },
 };
 
-let guessNumber = guessfunc();
-guessNumber();
+appData.start();
