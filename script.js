@@ -1,31 +1,114 @@
-let randomNum = parseInt(Math.random() * 100);
-// console.log(randomNum);
-let userNum = prompt("Угадай число от 1 до 100");
+"use strict";
 
-let guessfunc = () => {
-  function Res() {
-    if (userNum == null) {
-      alert("Игра окончена");
-      return;
+const appData = {
+  title: "",
+  screens: [],
+  screenPrice: 0,
+  services: [],
+  adaptive: true,
+  allServicePrices: 0,
+  fullPrice: 0,
+  rollback: 0.2,
+  servicePercentPrice: 0,
+  start: function () {
+    appData.asking();
+    appData.appPrices();
+    appData.getFullPrice();
+    appData.getServicePercentPrices();
+    appData.getTitle();
+    appData.logger();
+  },
+
+  isNumber: function (num) {
+    return !isNaN(parseFloat(num)) && isFinite(num);
+  },
+
+  isString: function (str, ask) {
+    do {
+      str = prompt(ask);
+    } while (appData.isNumber(str));
+    return str;
+  },
+
+  asking: function () {
+    appData.title = appData.isString(
+      appData.title,
+      "Как называется ваш проект?"
+    );
+
+    for (let i = 0; i < 2; i++) {
+      let str;
+      let name = appData.isString(str, "Какие типы экранов нужно разработать?");
+      let price = 0;
+
+      do {
+        price = prompt("Сколько будет стоить данная работа?");
+      } while (!appData.isNumber(price));
+
+      appData.screens.push({ id: i, name: name, price: price.trim() });
     }
-    if (userNum == randomNum) {
-      alert("Поздравляю, Вы угадали!!!");
-    } else if (isNaN(userNum)) {
-      alert("Введи число!");
-      userNum = prompt("Введите число");
-      guessNumber();
-    } else if (userNum < randomNum) {
-      alert("Загаданное число больше");
-      userNum = prompt("Введите число");
-      guessNumber();
-    } else if (userNum > randomNum) {
-      alert("Загаданное число меньше");
-      userNum = prompt("Введите число");
-      guessNumber();
+
+    for (let i = 0; i < 2; i++) {
+      let str;
+      let name = appData.isString(
+        str,
+        "Какой дополнительный тип услуги нужен?"
+      );
+      let price = 0;
+
+      do {
+        price = prompt("Сколько это будет стоить?");
+      } while (!appData.isNumber(price));
+
+      appData.services.push({ id: i, name: name, price: +price.trim() });
     }
-  }
-  return Res;
+
+    appData.adaptive = confirm("Нужен ли адаптив на сайте?");
+  },
+
+  appPrices: function () {
+    appData.screenPrice = appData.screens
+      .map((item) => item.price)
+      .reduce((prev, curr) => prev + +curr, 0);
+
+    for (let service of appData.services) {
+      appData.allServicePrices += service.price;
+    }
+  },
+
+  getRollbackMessage: function (price) {
+    if (price > 30000) {
+      return "Даем скидку в 10%";
+    } else if (15000 < price && price <= 30000) {
+      return "Даем скидку в 5%";
+    } else if (0 <= price && price <= 15000) {
+      return "Скидка не предусмотрена";
+    } else {
+      return "Что-то пошло не так";
+    }
+  },
+
+  getFullPrice: function () {
+    appData.fullPrice = appData.screenPrice + appData.allServicePrices;
+  },
+
+  getTitle: function () {
+    appData.title =
+      appData.title.trim()[0].toUpperCase() +
+      appData.title.trim().substring(1).toLowerCase();
+  },
+
+  getServicePercentPrices: function () {
+    appData.servicePercentPrice = Math.ceil(
+      appData.fullPrice - appData.fullPrice * appData.rollback
+    );
+  },
+
+  logger: function () {
+    console.log(appData.fullPrice);
+    console.log(appData.servicePercentPrice);
+    console.log(appData.services);
+  },
 };
 
-let guessNumber = guessfunc();
-guessNumber();
+appData.start();
